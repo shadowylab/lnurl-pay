@@ -1,7 +1,10 @@
 // Copyright (c) 2024 Yuki Kishimoto
 // Distributed under the MIT software license
 
+use core::fmt;
 use std::str::FromStr;
+
+use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::error::Error;
 use crate::lud06::LnUrl;
@@ -10,6 +13,12 @@ use crate::lud06::LnUrl;
 pub struct LightningAddress {
     name: String,
     domain: String,
+}
+
+impl fmt::Display for LightningAddress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}@{}", self.name, self.domain)
+    }
 }
 
 impl LightningAddress {
@@ -46,6 +55,25 @@ impl FromStr for LightningAddress {
     }
 }
 
+impl Serialize for LightningAddress {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for LightningAddress {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let addr = String::deserialize(deserializer)?;
+        LightningAddress::parse(addr).map_err(serde::de::Error::custom)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
@@ -59,6 +87,7 @@ mod tests {
             address.endpoint(),
             "https://opreturnbot.com/.well-known/lnurlp/ben"
         );
+        assert_eq!(address.to_string(), String::from("ben@opreturnbot.com"))
     }
 
     #[test]

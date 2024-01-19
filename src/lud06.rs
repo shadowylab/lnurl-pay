@@ -4,6 +4,7 @@
 use std::str::FromStr;
 
 use bech32::{FromBase32, ToBase32, Variant};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::error::Error;
 
@@ -54,6 +55,25 @@ impl FromStr for LnUrl {
         } else {
             Err(Error::InvalidLnUrl)
         }
+    }
+}
+
+impl Serialize for LnUrl {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.encode().map_err(serde::ser::Error::custom)?)
+    }
+}
+
+impl<'de> Deserialize<'de> for LnUrl {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let lnurl = String::deserialize(deserializer)?;
+        LnUrl::from_str(&lnurl).map_err(serde::de::Error::custom)
     }
 }
 
