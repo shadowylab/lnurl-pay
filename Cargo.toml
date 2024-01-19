@@ -10,8 +10,12 @@ license = "MIT"
 readme = "README.md"
 rust-version = "1.64.0"
 
+[features]
+default = []
+api = ["dep:reqwest"]
+
 [dependencies]
 bech32 = "0.9"
-reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls", "socks"] }
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls", "socks"], optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
