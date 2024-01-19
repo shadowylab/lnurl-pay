@@ -1,0 +1,14 @@
+[package]
+name = "lnurl-pay"
+version = "0.1.0"
+edition = "2021"
+description = "LNURL Pay"
+authors = ["Yuki Kishimoto <yukikishimoto@protonmail.com>"]
+homepage = "https://github.com/shadowylab/lnrul-pay"
+repository = "https://github.com/shadowylab/lnrul-pay.git"
+license = "MIT"
+readme = "README.md"
+rust-version = "1.64.0"
+
+[dependencies]
+bech32 = "0.9"
