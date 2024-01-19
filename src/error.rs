@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Yuki Kishimoto
 // Distributed under the MIT software license
 
-use std::fmt;
+use core::fmt;
 
 #[derive(Debug)]
 pub enum Error {

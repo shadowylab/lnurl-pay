@@ -1,7 +1,8 @@
 // Copyright (c) 2024 Yuki Kishimoto
 // Distributed under the MIT software license
 
-use std::str::FromStr;
+use alloc::string::String;
+use core::str::FromStr;
 
 use bech32::{FromBase32, ToBase32, Variant};
 use serde::{Deserialize, Deserializer, Serialize};
@@ -79,6 +80,8 @@ impl<'de> Deserialize<'de> for LnUrl {
 
 #[cfg(test)]
 mod tests {
+    use alloc::string::ToString;
+
     use super::*;
 
     #[test]

@@ -26,6 +26,10 @@ fi
 buildargs=(
     ""
     "--target wasm32-unknown-unknown"
+    "--no-default-features"
+    "--no-default-features --target wasm32-unknown-unknown"
+    "--features api"
+    "--features api --target wasm32-unknown-unknown"
 )
 
 for arg in "${buildargs[@]}"; do

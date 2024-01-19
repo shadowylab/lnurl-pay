@@ -1,8 +1,10 @@
 // Copyright (c) 2024 Yuki Kishimoto
 // Distributed under the MIT software license
 
+use alloc::format;
+use alloc::string::{String, ToString};
 use core::fmt;
-use std::str::FromStr;
+use core::str::FromStr;
 
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -76,7 +78,7 @@ impl<'de> Deserialize<'de> for LightningAddress {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
+    use core::str::FromStr;
 
     use super::*;
 
