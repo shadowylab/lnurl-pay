@@ -35,6 +35,11 @@ impl LnUrl {
         let base32 = self.url.as_bytes().to_base32();
         Ok(bech32::encode(PREFIX, base32, Variant::Bech32)?)
     }
+
+    #[inline]
+    pub fn endpoint(&self) -> String {
+        self.url.clone()
+    }
 }
 
 impl FromStr for LnUrl {
