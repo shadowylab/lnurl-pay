@@ -47,6 +47,12 @@ struct PayResponse {
     // pub nostr_pubkey: Option<String>,
 }
 
+#[derive(Serialize, Deserialize)]
+struct LnURLPayInvoice {
+    /// Encoded bolt 11 invoice
+    pr: String,
+}
+
 pub enum Lud06OrLud16 {
     Lud06(LnUrl),
     Lud16(LightningAddress),
@@ -119,5 +125,6 @@ where
         None => format!("{}{}amount={}", pay_response.callback, symbol, msats),
     };
     let resp = client.get(&url).send().await?;
-    Ok(resp.error_for_status()?.json().await?)
+    let invoice: LnURLPayInvoice = resp.error_for_status()?.json().await?;
+    Ok(invoice.pr)
 }
