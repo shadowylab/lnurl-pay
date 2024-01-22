@@ -50,7 +50,9 @@ struct PayResponse {
 #[derive(Serialize, Deserialize)]
 struct LnURLPayInvoice {
     /// Encoded bolt 11 invoice
-    pr: String,
+    pr: Option<String>,
+    status: Option<String>,
+    reason: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -150,8 +152,11 @@ where
         }
         None => url,
     };
-    dbg!(&url);
     let resp = client.get(&url).send().await?;
     let invoice: LnURLPayInvoice = resp.error_for_status()?.json().await?;
-    Ok(invoice.pr)
+
+    match invoice.pr {
+        Some(pr) => Ok(pr),
+        None => Err(Error::CantGetInvoice(invoice.reason)),
+    }
 }

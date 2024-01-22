@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Yuki Kishimoto
 // Distributed under the MIT software license
 
+use alloc::string::String;
 use core::fmt;
 
 #[derive(Debug)]
@@ -19,6 +20,7 @@ pub enum Error {
         msats: u64,
         max: u64,
     },
+    CantGetInvoice(Option<String>),
 }
 
 #[cfg(feature = "std")]
@@ -39,6 +41,11 @@ impl fmt::Display for Error {
             Self::AmountTooHigh { msats, max } => {
                 write!(f, "Amount too high: {msats} msats (max. {max} msats)")
             }
+            Self::CantGetInvoice(e) => write!(
+                f,
+                "Can't get invoice: {}",
+                e.as_deref().unwrap_or("unknown")
+            ),
         }
     }
 }
