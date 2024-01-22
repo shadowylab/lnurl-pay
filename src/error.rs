@@ -11,6 +11,14 @@ pub enum Error {
     InvalidLnUrl,
     InvalidLightningAddress,
     UnknownTag,
+    AmountTooLow {
+        msats: u64,
+        min: u64,
+    },
+    AmountTooHigh {
+        msats: u64,
+        max: u64,
+    },
 }
 
 #[cfg(feature = "std")]
@@ -25,6 +33,12 @@ impl fmt::Display for Error {
             Self::InvalidLnUrl => write!(f, "Invalid LNURL"),
             Self::InvalidLightningAddress => write!(f, "Invalid Lightning Address"),
             Self::UnknownTag => write!(f, "Unknown tag"),
+            Self::AmountTooLow { msats, min } => {
+                write!(f, "Amount too low: {msats} msats (min. {min} msats)")
+            }
+            Self::AmountTooHigh { msats, max } => {
+                write!(f, "Amount too high: {msats} msats (max. {max} msats)")
+            }
         }
     }
 }

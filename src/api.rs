@@ -91,6 +91,10 @@ pub async fn get_invoice<S>(
 where
     S: Into<Lud06OrLud16>,
 {
+    if msats == 0 {
+        return Err(Error::AmountTooLow { msats, min: 1 });
+    }
+
     // Compose client
     #[cfg(not(target_arch = "wasm32"))]
     let client: Client = {
@@ -110,6 +114,20 @@ where
     let endpoint: String = lud.endpoint();
     let resp = client.get(endpoint).send().await?;
     let pay_response: PayResponse = resp.error_for_status()?.json().await?;
+
+    if msats < pay_response.min_sendable {
+        return Err(Error::AmountTooLow {
+            msats,
+            min: pay_response.min_sendable,
+        });
+    }
+
+    if msats > pay_response.max_sendable {
+        return Err(Error::AmountTooHigh {
+            msats,
+            max: pay_response.max_sendable,
+        });
+    }
 
     // Get invoice
     let symbol: &str = if pay_response.callback.contains('?') {
