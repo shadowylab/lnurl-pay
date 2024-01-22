@@ -86,6 +86,7 @@ impl From<LightningAddress> for Lud06OrLud16 {
 pub async fn get_invoice<S>(
     lud: S,
     msats: u64,
+    comment: Option<String>,
     zap_request: Option<String>,
     _proxy: Option<SocketAddr>,
 ) -> Result<String, Error>
@@ -143,6 +144,13 @@ where
         ),
         None => format!("{}{}amount={}", pay_response.callback, symbol, msats),
     };
+    let url = match comment {
+        Some(comment) => {
+            format!("{url}&comment={comment}")
+        }
+        None => url,
+    };
+    dbg!(&url);
     let resp = client.get(&url).send().await?;
     let invoice: LnURLPayInvoice = resp.error_for_status()?.json().await?;
     Ok(invoice.pr)
