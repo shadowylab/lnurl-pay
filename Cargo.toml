@@ -1,6 +1,6 @@
 [package]
 name = "lnurl-pay"
-version = "0.2.3"
+version = "0.2.4"
 edition = "2021"
 description = "LNURL Pay"
 authors = ["Yuki Kishimoto <yukikishimoto@protonmail.com>"]
