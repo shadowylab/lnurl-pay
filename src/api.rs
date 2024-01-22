@@ -53,6 +53,7 @@ struct LnURLPayInvoice {
     pr: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Lud06OrLud16 {
     Lud06(LnUrl),
     Lud16(LightningAddress),
