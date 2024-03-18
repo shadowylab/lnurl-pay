@@ -6,7 +6,8 @@ use core::fmt;
 
 #[derive(Debug)]
 pub enum Error {
-    Bech32(bech32::Error),
+    Fmt(fmt::Error),
+    Bech32(bech32::DecodeError),
     #[cfg(feature = "api")]
     Reqwest(reqwest::Error),
     InvalidLnUrl,
@@ -29,6 +30,7 @@ impl std::error::Error for Error {}
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::Fmt(e) => write!(f, "{e}"),
             Self::Bech32(e) => write!(f, "Bech32: {e}"),
             #[cfg(feature = "api")]
             Self::Reqwest(e) => write!(f, "Reqwest: {e}"),
@@ -50,8 +52,14 @@ impl fmt::Display for Error {
     }
 }
 
-impl From<bech32::Error> for Error {
-    fn from(e: bech32::Error) -> Self {
+impl From<fmt::Error> for Error {
+    fn from(e: fmt::Error) -> Self {
+        Self::Fmt(e)
+    }
+}
+
+impl From<bech32::DecodeError> for Error {
+    fn from(e: bech32::DecodeError) -> Self {
         Self::Bech32(e)
     }
 }

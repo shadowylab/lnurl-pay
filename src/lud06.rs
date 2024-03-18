@@ -4,12 +4,13 @@
 use alloc::string::String;
 use core::str::FromStr;
 
-use bech32::{FromBase32, ToBase32, Variant};
+use bech32::{Bech32, Hrp};
 use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::error::Error;
 
 const PREFIX: &str = "lnurl";
+const HRP_PREFIX: Hrp = Hrp::parse_unchecked(PREFIX);
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct LnUrl {
@@ -34,8 +35,8 @@ impl LnUrl {
 
     #[inline]
     pub fn encode(&self) -> Result<String, Error> {
-        let base32 = self.url.as_bytes().to_base32();
-        Ok(bech32::encode(PREFIX, base32, Variant::Bech32)?)
+        let bytes = self.url.as_bytes();
+        Ok(bech32::encode::<Bech32>(HRP_PREFIX, bytes)?)
     }
 
     #[inline]
@@ -49,8 +50,12 @@ impl FromStr for LnUrl {
 
     fn from_str(s: &str) -> Result<Self, Error> {
         if s.to_lowercase().starts_with(PREFIX) {
-            let (_, data, _) = bech32::decode(s).map_err(|_| Error::InvalidLnUrl)?;
-            let bytes = FromBase32::from_base32(&data).map_err(|_| Error::InvalidLnUrl)?;
+            let (hrp, bytes) = bech32::decode(s).map_err(|_| Error::InvalidLnUrl)?;
+
+            if hrp != HRP_PREFIX {
+                return Err(Error::InvalidLnUrl);
+            }
+
             let url = String::from_utf8(bytes).map_err(|_| Error::InvalidLnUrl)?;
             Ok(Self { url })
         } else {
